@@ -1,0 +1,27 @@
+sudo brew install wget/sudo port install wget
+
+sudo pip install --upgrade pip
+
+ 
+
+sudo pip install virtualenvwrapper --upgrade --ignore-installed six
+
+ 
+
+sudo pip install Scrapy --upgrade --ignore-installed six
+
+
+
+
+
+wget http://pypi.python.org/packages/source/z/zope.interface/zope.interface-4.0.1.tar.gz
+
+
+
+
+spider模版
+http://cuiqingcai.com/3472.html
+
+
+beautifulsoup
+http://cuiqingcai.com/1319.html
