@@ -1,0 +1,5 @@
+#LWP-Cookies-2.0
+Set-Cookie3: BIGipServerotn="1307574794.24610.0000"; path="/"; domain="kyfw.12306.cn"; path_spec; discard; version=0
+Set-Cookie3: current_captcha_type=Z; path="/"; domain="kyfw.12306.cn"; path_spec; discard; version=0
+Set-Cookie3: JSESSIONID=7F000001CA7B61C915DFE546E676CA97D79DED3450; path="/otn"; domain="kyfw.12306.cn"; path_spec; discard; version=0
+Set-Cookie3: __NRF=D1E1B1D82943381ABC0A1003FA33F24D; path="/otn"; domain="kyfw.12306.cn"; path_spec; discard; version=0
