@@ -5,6 +5,11 @@ import scrapy
 from bs4 import  BeautifulSoup
 from  scrapy.http import Request
 from ZongHeng.items import  ZonghengItem
+from ZongHeng.items import DcontentItem
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 class MySpider(scrapy.Spider):
 
@@ -38,18 +43,85 @@ class MySpider(scrapy.Spider):
         li_s = BeautifulSoup(response.text, 'lxml').find('ul',class_ = 'main_con').find_all('li')
 
         for li in li_s:
-            span = li.find('span',class_ = 'chap');
-            if span:
-                novelName = span.find_all('a', class_='fs14')[0].get_text()
-                novelurl = span.find_all('a', class_='fs14')[0]['href']
-                print '----'
-                print novelName + novelurl
-                print '----'
+            nameSpan = li.find('span',class_ = 'chap');
+            if nameSpan:
+                novelName = nameSpan.find_all('a', class_='fs14')[0].get_text()
+                novelurl = nameSpan.find_all('a', class_='fs14')[0]['href']
+            authorSpan = li.find('span', class_='author')
 
-                yield Request(novelurl,callback=self.get_chapterUrl,meta={'name':novelName,'url':novelurl})
+            if authorSpan:
+                novelAuthor = authorSpan.find_all('a')[0].get_text()
+            kindSpan = li.find('span', class_='kind')
+            if kindSpan:
+                novelKind = kindSpan.find_all('a')[0].get_text()
+            countSpan = li.find('span', class_='number')
+            if countSpan:
+                count = countSpan.get_text().replace("\n", "").strip()
 
+            if nameSpan and authorSpan and kindSpan:
+
+                # print novelName+'*'+novelurl+'*'+novelAuthor+'*'+novelKind+'*'+str(count)
+                # print '**'
+                # print count
+                # print '**'
+                yield Request(novelurl,callback=self.get_chapterUrl,meta={'name':novelName,'url':novelurl,'author':novelAuthor,'kind':novelKind,'count':count})
 
     def get_chapterUrl(self,response):
 
 
+        item = ZonghengItem()
+        item['name'] = str(response.meta['name']).replace('\n','').strip()
+        item['novelurl'] = str(response.meta['url'])
+        item['author'] = str(response.meta['author'])
+        item['category'] = str(response.meta['kind'])
+        item['count'] = str(response.meta['count'])
+        name_id = BeautifulSoup(response.text, 'lxml').find('body')['bookid']
+        item['name_id'] = name_id
+
+        contentsText = BeautifulSoup(response.text, 'lxml').find('a',class_ = 'btn_dl')
+        contentsUrl = None
+        if contentsText:
+            contentsUrl = contentsText['href']
+
+
+        if contentsUrl:
+            # return item
+            # print '***'
+            # print contentsUrl
+            # print '***'
+            yield item
+            yield Request(url=contentsUrl,callback=self.get_chapter,meta={'name_id':name_id})
+
+
+    def get_chapter(self,response):
+
+        # print '-----'
+        # print  response.url
+        # print '-----'
+        urls = re.findall(r'<td class="chapterBean".*?><a href="(.*?)".*?>(.*?)</a></td>',response.text)
+        # print  urls
+        num = 0
+        for url in urls:
+            num = num +1
+            chapterurl = str(url[0])
+            chaptername = str(url[1])
+            yield Request(chapterurl,callback=self.get_chaptercontent,meta={'num':str(num),'name_id':response.meta['name_id'],'chaptername':chaptername,'chapterurl':chapterurl})
+
         pass
+
+    def get_chaptercontent(self,response):
+
+        item = DcontentItem()
+        item['num'] = response.meta['num'];
+        item['name_id'] = response.meta['name_id']
+        item['chaptername'] = str(response.meta['chaptername'])
+        item['chapterurl'] = str(response.meta['chapterurl'])
+        content = BeautifulSoup(response.text,'lxml').find('div',id="readerFs")
+        item['chaptercontent'] = str(content)
+        # print content
+
+        yield item
+
+        pass
+
+

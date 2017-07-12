@@ -19,4 +19,24 @@ class ZonghengItem(scrapy.Item):
 
     name_id = scrapy.Field()
 
+    count =  scrapy.Field()
+
+    category = scrapy.Field()
+
+
+
     pass
+
+class DcontentItem(scrapy.Item):
+
+    name = scrapy.Field()
+
+    name_id = scrapy.Field()
+
+    chaptercontent = scrapy.Field()
+
+    num = scrapy.Field()
+
+    chapterurl = scrapy.Field()
+
+    chaptername = scrapy.Field()
