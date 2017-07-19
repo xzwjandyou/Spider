@@ -33,16 +33,16 @@ class myspider(CrawlSpider):
     def parse_item(self, response):
         print(response.url)
 
-        contentList = response.xpath('//*[@class="post-grid clearfix"]/div').extract()
+        contentList = response.xpath('//*[@class="post-grid clearfix"]/div').extract()#返回文本列表，如果没有extract返回的是selector对象列表
         # print '**'
         # print contentList
         # print '**'
         for index, result in enumerate(contentList):
             item = TiantangbtItem()
-            resultOK = html.fromstring(result)
+            resultOK = html.fromstring(result)#文本转成html对象
             # print resultOK
-            item['url'] = resultOK.xpath('//a[@class="entry-thumb lazyload"]/@href')
-            item['title'] = resultOK.xpath('//h2[@class="entry-title"]/a//strong/text()')
+            item['url'] = resultOK.xpath('//a[@class="entry-thumb lazyload"]/@href')#对html对象在进行筛选，如果传进来的是selector，那么筛选结果就是从最初的html文本筛选出来的
+            item['title'] = resultOK.xpath('//h2[@class="entry-title"]/a//strong/text()')#父子用／ 如果不是父子就用／／
             item['date'] = resultOK.xpath('//div[@class="entry-meta"]//span[@class="date"]/text()')
             # item['imgurl'] = result.xpath('//*[@class="post-grid clearfix"]/div').extract()
             print '**'
